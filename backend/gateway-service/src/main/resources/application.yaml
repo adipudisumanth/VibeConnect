@@ -38,6 +38,9 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
 
+  instance:
+    prefer-ip-address: true
+
 jwt:
   secret:
     key: Q8z7vKp9rX2wdLm5tFsG1hJ6bYcR_VIBE_2026
