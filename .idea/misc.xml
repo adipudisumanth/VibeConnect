@@ -6,7 +6,10 @@
       <list>
         <option value="$PROJECT_DIR$/backend/eureka-server/pom.xml" />
         <option value="$PROJECT_DIR$/backend/gateway-service/pom.xml" />
+<<<<<<< HEAD
         <option value="$PROJECT_DIR$/backend/project-service/pom.xml" />
+=======
+>>>>>>> 95dfdf1c0eec57064ae5e3bd1127a4e4e0564429
       </list>
     </option>
   </component>
