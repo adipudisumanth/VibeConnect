@@ -22,6 +22,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,54 +61,42 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("US-003: Should Register User Successfully")
-    void testRegisterUser_Success() {
-        // Arrange [cite: 49]
-        when(userRepository.existsByEmail(anyString())).thenReturn(false);
-        when(passwordEncoder.encode(anyString())).thenReturn("hashedPassword");
-        when(userRepository.save(any(User.class))).thenReturn(user);
-        when(jwtUtils.generateToken(anyLong(), anyString())).thenReturn("mock-jwt-token");
+@DisplayName("US-003: Should Register User Successfully")
+void testRegisterUser_Success() {
+    when(userRepository.existsByEmail(anyString())).thenReturn(false);
+    when(passwordEncoder.encode(anyString())).thenReturn("hashedPassword");
+    when(userRepository.save(any(User.class))).thenReturn(user);
+    when(jwtUtils.generateToken(anyLong(), anyString())).thenReturn("mock-jwt-token");
 
-        // Act
-        AuthResponse response = userService.register(registrationDto);
+    AuthResponse response = userService.register(registrationDto);
 
-        // Assert
-        assertNotNull(response);
-        assertEquals("mock-jwt-token", response.getToken());
-        verify(userRepository, times(1)).save(any(User.class));
-    }
+    assertNotNull(response);
+    assertEquals("mock-jwt-token", response.getToken());
+    assertEquals(1L, response.getUserId());
+    verify(userRepository, times(1)).save(any(User.class));
+}
 
     @Test
     @DisplayName("US-003: Should Throw UserAlreadyExistsException for Duplicate Email")
     void testRegisterUser_DuplicateEmail() {
-        // Arrange
         when(userRepository.existsByEmail(registrationDto.getEmail())).thenReturn(true);
-
-        // Act & Assert - Match the exact class and the dynamic message from your Impl
         UserAlreadyExistsException exception = assertThrows(UserAlreadyExistsException.class, () -> {
             userService.register(registrationDto);
         });
-
         assertEquals("Email already in use: test@vibeconnect.com", exception.getMessage());
     }
 
     @Test
     @DisplayName("Login: Should Return Token for Valid Credentials")
     void testLogin_Success() {
-        // Arrange
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail("test@vibeconnect.com");
         loginRequest.setPassword("password123");
-
         user.setPasswordHash("hashedPassword");
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
         when(jwtUtils.generateToken(anyLong(), anyString())).thenReturn("mock-jwt-token");
-
-        // Act
         AuthResponse response = userService.login(loginRequest);
-
-        // Assert
         assertNotNull(response);
         assertEquals("mock-jwt-token", response.getToken());
     }
@@ -114,14 +104,10 @@ class UserServiceImplTest {
     @Test
     @DisplayName("Profile: Should Throw UserNotFoundException when User Not Found")
     void testGetProfile_NotFound() {
-        // Arrange
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
-
-        // Act & Assert
         UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
             userService.getProfile(99L);
         });
-
         assertEquals("User not found with ID: 99", exception.getMessage());
     }
 }

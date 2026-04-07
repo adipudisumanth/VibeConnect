@@ -1,7 +1,6 @@
 package com.gl.userService.util;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -32,11 +31,11 @@ public class JwtUtils {
         claims.put("userId", userId);
 
         return Jwts.builder()
-                .claims(claims) // Updated from setClaims
+                .claims(claims)
                 .subject(String.valueOf(userId))
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(getSigningKey()) // Algorithm is inferred from the SecretKey
+                .signWith(getSigningKey())
                 .compact();
     }
 }

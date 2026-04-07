@@ -11,5 +11,5 @@ public class ErrorResponse {
     private int status;
     private String message;
     private LocalDateTime timestamp;
-    private Map<String, String> errors; // Specifically for @Valid validation failures
+    private Map<String, String> errors;
 }

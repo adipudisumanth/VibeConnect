@@ -5,8 +5,8 @@ import com.gl.userService.repository.UserRepository;
 import com.gl.userService.service.UserService;
 import com.gl.userService.dto.*;
 import com.gl.userService.util.JwtUtils;
-import com.gl.userService.exception.UserAlreadyExistsException; // Import custom exception
-import com.gl.userService.exception.UserNotFoundException;      // Import custom exception
+import com.gl.userService.exception.UserAlreadyExistsException;
+import com.gl.userService.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j // Mandatory SLF4J logging
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -30,7 +30,6 @@ public class UserServiceImpl implements UserService {
     public AuthResponse register(UserRegistrationDTO dto) {
         log.info("Processing registration for email: {}", dto.getEmail());
 
-        // US-003: Handle duplicate email with custom exception [cite: 26, 142]
         if (userRepository.existsByEmail(dto.getEmail())) {
             log.error("Registration failed: Email {} already exists", dto.getEmail());
             throw new UserAlreadyExistsException("Email already in use: " + dto.getEmail());
@@ -48,7 +47,7 @@ public class UserServiceImpl implements UserService {
         log.info("User registered successfully with ID: {}", savedUser.getId());
 
         String token = jwtUtils.generateToken(savedUser.getId(), savedUser.getRole());
-        return new AuthResponse(token, savedUser.getEmail(), savedUser.getRole());
+        return new AuthResponse(token, savedUser.getId(), savedUser.getRole());
     }
 
     @Override
@@ -57,18 +56,14 @@ public class UserServiceImpl implements UserService {
         log.info("Authentication attempt for email: {}", dto.getEmail());
 
         User user = userRepository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> {
-                    log.warn("Login failed: User not found with email {}", dto.getEmail());
-                    return new UserNotFoundException("Invalid Credentials");
-                });
+                .orElseThrow(() -> new UserNotFoundException("Invalid Credentials"));
 
         if (!passwordEncoder.matches(dto.getPassword(), user.getPasswordHash())) {
-            log.warn("Login failed: Incorrect password for email {}", dto.getEmail());
             throw new UserNotFoundException("Invalid Credentials");
         }
 
         String token = jwtUtils.generateToken(user.getId(), user.getRole());
-        return new AuthResponse(token, user.getEmail(), user.getRole());
+        return new AuthResponse(token, user.getId(), user.getRole());
     }
 
     @Override

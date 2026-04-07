@@ -13,11 +13,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
-@Slf4j // Mandatory SLF4J logging [cite: 50, 168]
+@Slf4j
 
 public class GlobalExceptionHandler {
 
-    // Handles US-003: Duplicate Email Check [cite: 142]
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleUserAlreadyExists(UserAlreadyExistsException ex) {
         log.error("Conflict Error: {}", ex.getMessage());
@@ -30,7 +29,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
-    // Handles US-004: Resource Not Found [cite: 145]
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException ex) {
         log.error("Not Found Error: {}", ex.getMessage());
@@ -43,7 +41,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
-    // Handles DTO Validation Failures (@Valid)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
@@ -63,7 +60,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-    // Catch-all for generic internal server errors [cite: 61, 171]
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
         log.error("Internal Server Error: ", ex);

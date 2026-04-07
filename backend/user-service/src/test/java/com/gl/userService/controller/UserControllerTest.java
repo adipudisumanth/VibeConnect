@@ -20,22 +20,22 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest({UserController.class, GlobalExceptionHandler.class}) // Critical: Include the Exception Handler
+@WebMvcTest({UserController.class, GlobalExceptionHandler.class})
 @AutoConfigureMockMvc(addFilters = false)
 class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockitoBean // Fixed: Replaced deprecated @MockBean
+    @MockitoBean
     private UserService userService;
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @Test
-    @DisplayName("POST /api/users/register - Success")
-    void testRegister_Success() throws Exception {
+        @DisplayName("POST /api/users/register - Success")
+        void testRegister_Success() throws Exception {
         UserRequestDTO request = UserRequestDTO.builder()
                 .email("founder@vibe.com")
                 .password("password123")
@@ -43,21 +43,19 @@ class UserControllerTest {
                 .role("FOUNDER")
                 .build();
 
-        AuthResponse response = new AuthResponse("mock-token", "founder@vibe.com", "FOUNDER");
-
+        AuthResponse response = new AuthResponse("mock-token", 1L, "FOUNDER");
         when(userService.register(any(UserRegistrationDTO.class))).thenReturn(response);
-
         mockMvc.perform(post("/api/users/register")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.token").value("mock-token"));
-    }
+                .andExpect(jsonPath("$.token").value("mock-token"))
+                .andExpect(jsonPath("$.userId").value(1));
+        }
 
     @Test
     @DisplayName("POST /api/users/register - Validation Failure")
     void testRegister_ValidationError() throws Exception {
-        // This triggers the @Email and @Size validations in UserRequestDTO
         UserRequestDTO invalidRequest = UserRequestDTO.builder()
                 .email("not-an-email")
                 .password("123")
@@ -66,6 +64,6 @@ class UserControllerTest {
         mockMvc.perform(post("/api/users/register")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(invalidRequest)))
-                .andExpect(status().isBadRequest()); // Now correctly returns 400
+                .andExpect(status().isBadRequest());
     }
 }
