@@ -48,4 +48,17 @@ public class UserController {
         log.info("Fetching all users with role: {}", role);
         return ResponseEntity.ok(userService.getUsersByRole(role));
     }
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        log.info("Received forgot password request for email: {}", request.email());
+        userService.generateAndSendOtp(request.email());
+        return ResponseEntity.ok("OTP sent successfully to your email.");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        log.info("Received password reset attempt for email: {}", request.email());
+        userService.resetPassword(request.email(), request.otp(), request.newPassword());
+        return ResponseEntity.ok("Password has been reset successfully.");
+    }
 }
