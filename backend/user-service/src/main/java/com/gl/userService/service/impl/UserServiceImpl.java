@@ -45,9 +45,8 @@ public class UserServiceImpl implements UserService {
 
         User savedUser = userRepository.save(user);
         log.info("User registered successfully with ID: {}", savedUser.getId());
-
         String token = jwtUtils.generateToken(savedUser.getId(), savedUser.getRole());
-        return new AuthResponse(token, savedUser.getId(), savedUser.getRole());
+        return new AuthResponse(token, mapToDto(savedUser));
     }
 
     @Override
@@ -63,7 +62,7 @@ public class UserServiceImpl implements UserService {
         }
 
         String token = jwtUtils.generateToken(user.getId(), user.getRole());
-        return new AuthResponse(token, user.getId(), user.getRole());
+        return new AuthResponse(token, mapToDto(user));
     }
 
     @Override
