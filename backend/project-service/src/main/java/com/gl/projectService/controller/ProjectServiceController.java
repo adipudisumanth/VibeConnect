@@ -14,6 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api/projects")
@@ -106,5 +109,12 @@ public class ProjectServiceController {
         return ResponseEntity.ok("Project deleted successfully");
     }
 
+    @GetMapping("/founder/{id}")
+    public ResponseEntity<List<ProjectResponseDTO>> getMethodName(@PathVariable Long id) throws ProjectNotFoundException{
+        log.debug("GET /api/projects/founder/{}", id);
+        List<ProjectResponseDTO> projects = projectService.getProjectsByFounderId(id);
+        return ResponseEntity.ok(projects);
+    }
+    
 
 }

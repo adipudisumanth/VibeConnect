@@ -108,6 +108,18 @@ public class ProjectServiceImpl implements ProjectService {
         log.debug("Project id: {} deleted successfully", id);
     }
 
+    public List<ProjectResponseDTO> getProjectsByFounderId(Long founderId) throws ProjectNotFoundException{
+        List<Project> projects = projectRepository.findByFounderId(founderId);
+
+        if (projects == null || projects.isEmpty()) {
+            throw new ProjectNotFoundException("No projects found for founder ID: " + founderId);
+        }
+
+        return projects.stream()
+            .map(this::mapToResponse)
+            .toList();
+    }
+
     private ProjectResponseDTO mapToResponse(Project project) {
         return ProjectResponseDTO.builder()
                 .id(project.getId())

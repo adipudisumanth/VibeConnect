@@ -57,4 +57,9 @@ export const projectService = {
     const response = await axiosClient.delete(`/api/projects/${id}`);
     return response.data;
   },
+
+  getProjctsByFounderId: async (id: number | undefined): Promise<any> => {
+    const response = await axiosClient.get(`/api/projects/founder/${id}`);
+    return response.data;
+  },
 };
