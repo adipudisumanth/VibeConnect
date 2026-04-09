@@ -13,13 +13,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.util.HashMap;
+import java.security.SecureRandom;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -30,8 +35,10 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
+    private final Map<String, String> otpStorage = new HashMap<>();
     private final Map<String, String> otpStorage = new HashMap<>();
 
     @Override
