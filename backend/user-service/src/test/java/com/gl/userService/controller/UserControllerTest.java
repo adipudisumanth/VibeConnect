@@ -2,9 +2,8 @@ package com.gl.userService.controller;
 
 import com.gl.userService.exception.GlobalExceptionHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gl.userService.dto.AuthResponse;
-import com.gl.userService.dto.UserRegistrationDTO;
-import com.gl.userService.dto.UserRequestDTO;
+import com.gl.userService.dto.*;
+import com.gl.userService.entity.UserRole;
 import com.gl.userService.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +15,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -34,8 +35,8 @@ class UserControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-        @DisplayName("POST /api/users/register - Success")
-        void testRegister_Success() throws Exception {
+    @DisplayName("POST /api/users/register - Success")
+    void testRegister_Success() throws Exception {
         UserRequestDTO request = UserRequestDTO.builder()
                 .email("founder@vibe.com")
                 .password("password123")
@@ -43,15 +44,44 @@ class UserControllerTest {
                 .role("FOUNDER")
                 .build();
 
-        AuthResponse response = new AuthResponse("mock-token", 1L, "FOUNDER");
+        UserResponseDTO userDto = new UserResponseDTO(1L, "founder@vibe.com", "Startup Founder", UserRole.FOUNDER, null);
+        AuthResponse response = new AuthResponse("mock-token", userDto);
+        
         when(userService.register(any(UserRegistrationDTO.class))).thenReturn(response);
+
         mockMvc.perform(post("/api/users/register")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.token").value("mock-token"))
-                .andExpect(jsonPath("$.userId").value(1));
-        }
+                .andExpect(jsonPath("$.user.id").value(1));
+    }
+
+    @Test
+    @DisplayName("POST /api/users/forgot-password - Success")
+    void testForgotPassword_Success() throws Exception {
+        ForgotPasswordRequest request = new ForgotPasswordRequest("test@vibe.com");
+        doNothing().when(userService).generateAndSendOtp(anyString());
+
+        mockMvc.perform(post("/api/users/forgot-password")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(content().string("OTP sent successfully to your email."));
+    }
+
+    @Test
+    @DisplayName("POST /api/users/reset-password - Success")
+    void testResetPassword_Success() throws Exception {
+        ResetPasswordRequest request = new ResetPasswordRequest("test@vibe.com", "123456", "newPassword123");
+        doNothing().when(userService).resetPassword(anyString(), anyString(), anyString());
+
+        mockMvc.perform(post("/api/users/reset-password")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Password has been reset successfully."));
+    }
 
     @Test
     @DisplayName("POST /api/users/register - Validation Failure")

@@ -29,8 +29,9 @@ public class User {
     @Column(nullable = false)
     private String fullName;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String role;
+    private UserRole role;
 
     @Column(columnDefinition = "TEXT")
     private String skillsAndVibes;

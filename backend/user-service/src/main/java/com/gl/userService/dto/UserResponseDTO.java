@@ -1,5 +1,7 @@
 package com.gl.userService.dto;
 
+import com.gl.userService.entity.UserRole;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +15,6 @@ public class UserResponseDTO {
     private Long id;
     private String email;
     private String fullName;
-    private String role;
+    private UserRole role;
     private String skillsAndVibes;
 }

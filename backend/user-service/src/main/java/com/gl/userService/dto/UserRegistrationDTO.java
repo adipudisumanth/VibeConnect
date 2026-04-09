@@ -1,5 +1,7 @@
 package com.gl.userService.dto;
 
+import com.gl.userService.entity.UserRole;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -25,8 +27,7 @@ public class UserRegistrationDTO {
     @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
 
-    @NotBlank(message = "Role must be either FOUNDER or VIBECODER")
-    private String role;
+    private UserRole role;
 
     private String skillsAndVibes;
 }
