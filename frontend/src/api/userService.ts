@@ -10,8 +10,7 @@ export interface UserResponseDTO {
 
 export interface AuthResponse {
   token: string;
-  userId: UserResponseDTO;
-  role:string
+  user: UserResponseDTO;
 }
 
 export const userService = {

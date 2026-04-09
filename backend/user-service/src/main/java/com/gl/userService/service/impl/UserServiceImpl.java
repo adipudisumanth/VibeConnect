@@ -35,10 +35,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final JavaMailSender mailSender;
-    private final JavaMailSender mailSender;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
-    private final Map<String, String> otpStorage = new HashMap<>();
     private final Map<String, String> otpStorage = new HashMap<>();
 
     @Override
