@@ -6,7 +6,6 @@ interface AuthState {
   token: string | null;
   user: UserResponseDTO | null;
   isAuthenticated: boolean;
-  // Actions
   setAuth: (token: string, user: UserResponseDTO) => void;
   updateUser: (user: UserResponseDTO) => void;
   signout: () => void;
@@ -19,7 +18,6 @@ export const useAuth = create<AuthState>()(
       user: null,
       isAuthenticated: false,
 
-      // Call this after successful login or registration
       setAuth: (token, user) =>
         set({
           token,
@@ -27,13 +25,11 @@ export const useAuth = create<AuthState>()(
           isAuthenticated: true,
         }),
 
-      // Call this when updating the profile
       updateUser: (user) =>
         set({
           user,
         }),
 
-      // Clears everything from state and localStorage
       signout: () =>
         set({
           token: null,
@@ -42,7 +38,7 @@ export const useAuth = create<AuthState>()(
         }),
     }),
     {
-      name: "vibeconnect-auth", // unique name for localStorage key
+      name: "vibeconnect-auth",
       storage: createJSONStorage(() => localStorage),
     },
   ),
