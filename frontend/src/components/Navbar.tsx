@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +28,7 @@ interface NavbarProps {
 
 export function Navbar({ role }: NavbarProps) {
   const isFounder = role === "FOUNDER";
+  const navigate = useNavigate();
   const { signout, user } = useAuth();
   const [activeModal, setActiveModal] = React.useState<"profile" | "applications" | "stories" | null>(null);
 
@@ -100,7 +101,7 @@ export function Navbar({ role }: NavbarProps) {
               <DropdownMenuSeparator />
               <DropdownMenuItem 
                 className="cursor-pointer py-3 text-destructive focus:bg-destructive/10 focus:text-destructive"
-                onSelect={() => signout()}
+                onSelect={() => { signout(); setActiveModal(null); navigate({ to: "/login", replace: true }); }}
               >
                 <LogOut className="mr-3 h-5 w-5" />
                 <span className="text-sm font-medium">Sign out</span>

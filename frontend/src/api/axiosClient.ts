@@ -1,3 +1,4 @@
+import { useAuth } from "@/hooks/useAuth";
 import axios from "axios";
 
 const axiosClient = axios.create({
@@ -7,10 +8,9 @@ const axiosClient = axios.create({
   },
 });
 
-// Interceptor to add Authorization header automatically
 axiosClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = useAuth.getState().token;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

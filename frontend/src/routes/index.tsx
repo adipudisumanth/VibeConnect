@@ -116,7 +116,7 @@ function RouteComponent() {
           </div>
 
           <div className="flex items-center gap-6">
-            <Link to="/api/projects" className="text-sm text-slate-400 hover:text-white transition-colors">
+            <Link to="/login" className="text-sm text-slate-400 hover:text-white transition-colors">
               Explore Projects
             </Link>
             {user ? (
@@ -175,11 +175,11 @@ function RouteComponent() {
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
             className="flex flex-wrap justify-center gap-4"
           >
-            <Button size="lg" className="bg-white text-black hover:bg-slate-200 px-8 group" onClick={() => navigate({ to: "/api/users/register" })}>
+            <Button size="lg" className="bg-white text-black hover:bg-slate-200 px-8 group" onClick={() => navigate({ to: "/login" })}>
               I'm a Founder
               <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Button>
-            <Button size="lg" variant="outline" className="border-white/10 bg-white/5 hover:bg-white/10 px-8" onClick={() => navigate({ to: "/api/projects" })}>
+            <Button size="lg" variant="outline" className="border-white/10 bg-white/5 hover:bg-white/10 px-8" onClick={() => navigate({ to: "/login" })}>
               Browse Projects
             </Button>
           </motion.div>
@@ -345,11 +345,11 @@ function RouteComponent() {
                 Join the platform where the best startup ideas meet the builders who can bring them to life.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <Button size="lg" className="bg-white text-black hover:bg-slate-200 px-8 group" onClick={() => navigate({ to: "/api/users/register" })}>
+                <Button size="lg" className="bg-white text-black hover:bg-slate-200 px-8 group" onClick={() => navigate({ to: "/login" })}>
                   Get started free
                   <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
-                <Button size="lg" variant="outline" className="border-white/10 bg-white/5 hover:bg-white/10 px-8" onClick={() => navigate({ to: "/api/projects" })}>
+                <Button size="lg" variant="outline" className="border-white/10 bg-white/5 hover:bg-white/10 px-8" onClick={() => navigate({ to: "/login" })}>
                   Browse projects
                 </Button>
               </div>

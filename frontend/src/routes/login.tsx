@@ -1,10 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { userService, AuthResponse } from "@/api/userService";
 import { useAuth } from "@/hooks/useAuth";
-import { toast } from "sonner"; // Import sonner
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,7 +21,7 @@ import { Loader2, Lock, Mail, Eye, EyeOff } from "lucide-react";
 
 export const Route = createFileRoute("/login")({
   beforeLoad: ({ navigate }) => {
-    if (useAuth.getState().isAuthenticated) throw navigate({ to: "/" });
+    if (useAuth.getState().isAuthenticated) throw navigate({ to: "/dashboard" });
   },
   component: LoginComponent,
 });
@@ -39,7 +39,7 @@ function LoginComponent() {
       toast.success("Welcome back!", {
         description: `Logged in as ${data.user.fullName}`,
       });
-      navigate({ to: "/" });
+      navigate({ to: "/dashboard" });
     },
     onError: (error: any) => {
       toast.error("Login Failed", {
