@@ -43,4 +43,13 @@ export const userService = {
     const response = await axiosClient.get(`/api/users/role/${role}`);
     return response.data;
   },
+
+  forgotPassword: async (email: string): Promise<string> => {
+    return await axiosClient.post("/api/users/forgot-password", { email });
+  },
+
+  resetPassword: async (data: { email: string, otp: string, newPassword: string }): Promise<string> => {
+    return await axiosClient.post("/api/users/reset-password", data);
+  }
+
 };
