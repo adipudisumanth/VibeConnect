@@ -22,5 +22,8 @@ public interface ProjectService  {
     // US-008
     void deleteProject(Long id, Long requestingFounderId) throws ProjectNotFoundException;
 
+    void incrementFilledOpenings(Long projectId) throws ProjectNotFoundException;
+    void decrementFilledOpenings(Long projectId) throws ProjectNotFoundException;
+
     List<ProjectResponseDTO> getProjectsByFounderId(Long founderId) throws ProjectNotFoundException;
 }

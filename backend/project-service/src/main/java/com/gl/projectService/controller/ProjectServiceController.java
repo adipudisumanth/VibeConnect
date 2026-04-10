@@ -116,5 +116,18 @@ public class ProjectServiceController {
         return ResponseEntity.ok(projects);
     }
     
+    @PutMapping("/{id}/increment-filled-openings")
+    public ResponseEntity<String> incrementFilledOpenings(@PathVariable Long id) throws ProjectNotFoundException {
+        log.debug("PUT /api/projects/{}/increment-filled-openings", id);
+        projectService.incrementFilledOpenings(id);
+        return ResponseEntity.ok("Filled openings incremented successfully");
+    }
+
+    @PutMapping("/{id}/decrement-filled-openings")
+    public ResponseEntity<String> decrementFilledOpenings(@PathVariable Long id) throws ProjectNotFoundException {
+        log.debug("PUT /api/projects/{}/decrement-filled-openings", id);
+        projectService.decrementFilledOpenings(id);
+        return ResponseEntity.ok("Filled openings decremented successfully");
+    }
 
 }

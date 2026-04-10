@@ -7,9 +7,11 @@ import com.gl.application_service.exception.ApplicationNotFoundException;
 import java.util.List;
 
 public interface ApplicationService {
-    public void createApplication(ApplicationDTO applicationDTO) throws ApplicationNotFoundException;
-    public List<ApplicationDTO> getAllApplicationsOfProject(Long projectId) throws ApplicationNotFoundException;
-    public List<ApplicationDTO> getAllApplicationsOfUser(Long userId) throws ApplicationNotFoundException;
-    public void updateStatus(Long applicationId, Status status) throws ApplicationNotFoundException;
+    void createApplication(ApplicationDTO applicationDTO) throws ApplicationNotFoundException;
+    List<ApplicationDTO> getAllApplicationsOfProject(Long projectId) throws ApplicationNotFoundException;
+    List<ApplicationDTO> getAllApplicationsOfUser(Long userId) throws ApplicationNotFoundException;
+    void updateStatus(Long applicationId, Status status) throws ApplicationNotFoundException;
+    void deleteApplication(Long applicationId) throws ApplicationNotFoundException;
+    void deleteAllApplicationsForProject(Long projectId);
 
 }
