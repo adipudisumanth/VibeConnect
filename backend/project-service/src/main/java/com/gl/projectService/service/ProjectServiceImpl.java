@@ -108,6 +108,52 @@ public class ProjectServiceImpl implements ProjectService {
         log.debug("Project id: {} deleted successfully", id);
     }
 
+    public List<ProjectResponseDTO> getProjectsByFounderId(Long founderId) throws ProjectNotFoundException{
+        List<Project> projects = projectRepository.findByFounderId(founderId);
+
+        if (projects == null || projects.isEmpty()) {
+            throw new ProjectNotFoundException("No projects found for founder ID: " + founderId);
+        }
+
+        return projects.stream()
+            .map(this::mapToResponse)
+            .toList();
+    }
+
+    @Override
+    public void incrementFilledOpenings(Long projectId) throws ProjectNotFoundException {
+        log.debug("Incrementing filled openings for project id: {}", projectId);
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException(
+                        "Project not found with id: " + projectId));
+
+        if (project.getFilledOpenings() >= project.getTotalOpenings()) {
+            throw new IllegalStateException("Project slots are already full!");
+        }
+
+        project.setFilledOpenings(project.getFilledOpenings() + 1);
+        projectRepository.save(project);
+        log.debug("Successfully incremented filled openings for project id: {}", projectId);
+    }
+
+    @Override
+    public void decrementFilledOpenings(Long projectId) throws ProjectNotFoundException {
+        log.debug("Decrementing filled openings for project id: {}", projectId);
+
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException(
+                        "Project not found with id: " + projectId));
+
+        if (project.getFilledOpenings() <= 0) {
+            throw new IllegalStateException("Cannot decrement. Filled openings are already at zero!");
+        }
+
+        project.setFilledOpenings(project.getFilledOpenings() - 1);
+        projectRepository.save(project);
+
+        log.debug("Successfully decremented filled openings for project id: {}", projectId);
+    }
+
     private ProjectResponseDTO mapToResponse(Project project) {
         return ProjectResponseDTO.builder()
                 .id(project.getId())

@@ -12,4 +12,5 @@ public interface ApplicationRepository extends JpaRepository<Application,Long> {
     List<Application> findByProjectId(Long projectId);
     List<Application> findByUserId(Long userId);
     Application findByApplicationId(Long id);
+    void deleteByProjectId(Long projectId);
 }

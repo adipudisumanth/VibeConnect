@@ -18,4 +18,6 @@ public interface ProjectRepository extends JpaRepository<Project,Long> {
     List<Project> findByPostTypeAndIsActiveTrueOrderByCreatedAtDesc(
             PostType postType, Pageable pageable
     );
+
+    List<Project> findByFounderId(Long founderId);
 }

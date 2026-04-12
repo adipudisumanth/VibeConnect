@@ -53,4 +53,20 @@ export const applicationService = {
     );
     return response.data;
   },
+
+  // DELETE /api/applications/{applicationId}
+  deleteApplication: async (applicationId: number): Promise<string> => {
+    const response = await axiosClient.delete(
+      `/api/applications/${applicationId}`,
+    );
+    return response.data;
+  },
+
+  // DELETE /api/applications/project/{projectId}
+  deleteApplicationsByProject: async (projectId: number): Promise<string> => {
+    const response = await axiosClient.delete(
+      `/api/applications/project/${projectId}`,
+    );
+    return response.data;
+  },
 };

@@ -51,4 +51,17 @@ public class ApplicationController {
         applicationService.updateStatus(applicationId, status);
         return ResponseEntity.ok("Application status updated successfully");
     }
+    @DeleteMapping("/{applicationId}")
+    public ResponseEntity<String> deleteApplication(@PathVariable Long applicationId)
+            throws ApplicationNotFoundException {
+
+        applicationService.deleteApplication(applicationId);
+        return ResponseEntity.ok("Application deleted successfully");
+    }
+
+    @DeleteMapping("/project/{projectId}")
+    public ResponseEntity<String> deleteAllApplicationsForProject(@PathVariable Long projectId) {
+        applicationService.deleteAllApplicationsForProject(projectId);
+        return ResponseEntity.ok("Applications deleted successfully for project " + projectId);
+    }
 }

@@ -51,10 +51,21 @@ export const projectService = {
     return response.data;
   },
 
+  // PUT /api/projects/{id}
+  updateProject: async (id: number, projectData: any): Promise<ProjectResponseDTO> => {
+    const response = await axiosClient.put(`/api/projects/${id}`, projectData);
+    return response.data;
+  },
+
   // DELETE /api/projects/{id}
   // The Gateway ensures only the owner (matching founderId) can delete
   deleteProject: async (id: number): Promise<string> => {
     const response = await axiosClient.delete(`/api/projects/${id}`);
+    return response.data;
+  },
+
+  getProjctsByFounderId: async (id: number | undefined): Promise<any> => {
+    const response = await axiosClient.get(`/api/projects/founder/${id}`);
     return response.data;
   },
 };
