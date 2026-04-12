@@ -34,7 +34,11 @@ import { useAuth } from "@/hooks/useAuth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { applicationService } from "@/api/applicationService";
 import { projectService, type ProjectResponseDTO } from "@/api/projectService";
+import { userService } from "@/api/userService";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 interface NavbarProps {
   role: "FOUNDER" | "VIBECODER";
@@ -44,13 +48,26 @@ export function Navbar({ role }: NavbarProps) {
   const isFounder = role === "FOUNDER";
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { signout, user } = useAuth();
+  const { signout, user, updateUser } = useAuth();
   const [activeModal, setActiveModal] = React.useState<
     "profile" | "applications" | "stories" | null
   >(null);
   const [deletingStory, setDeletingStory] =
     React.useState<ProjectResponseDTO | null>(null);
   const [deletingAppId, setDeletingAppId] = React.useState<number | null>(null);
+  const [isEditingProfile, setIsEditingProfile] = React.useState(false);
+  const [editForm, setEditForm] = React.useState({ fullName: "", skillsAndVibes: "" });
+
+  React.useEffect(() => {
+    if (activeModal === "profile" && user) {
+      setEditForm({
+        fullName: user.fullName || "",
+        skillsAndVibes: user.skillsAndVibes || "",
+      });
+      setIsEditingProfile(false);
+    }
+  }, [activeModal, user]);
+
 
   // ── Queries ─────────────────────────────────────────────────────────
   const { data: applications } = useQuery({
@@ -98,6 +115,27 @@ export function Navbar({ role }: NavbarProps) {
       toast.error("Failed to withdraw application");
     },
   });
+
+  const updateProfileMutation = useMutation({
+    mutationFn: (data: { fullName: string; skillsAndVibes: string }) => {
+      return userService.updateProfile(user!.id, {
+        fullName: data.fullName,
+        skillsAndVibes: data.skillsAndVibes,
+        email: user!.email || "dummy@email.com",
+        password: "dummyPassword123", // Dummy password to bypass validation
+        role: user!.role,
+      });
+    },
+    onSuccess: (updatedUser) => {
+      toast.success("Profile updated successfully");
+      updateUser(updatedUser);
+      setIsEditingProfile(false);
+    },
+    onError: () => {
+      toast.error("Failed to update profile");
+    },
+  });
+
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md">
@@ -274,14 +312,68 @@ export function Navbar({ role }: NavbarProps) {
                   {role.toLowerCase()}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Member Since:</span>
-                <span className="font-medium">April 2026</span>
+              <div className="flex flex-col gap-1 mt-2">
+                <span className="text-muted-foreground">Skills & Vibes:</span>
+                <span className="font-medium whitespace-pre-wrap">
+                  {user?.skillsAndVibes || "No skills or vibes provided yet."}
+                </span>
               </div>
             </div>
-            <Button variant="outline" className="w-full">
-              Edit Profile
-            </Button>
+
+            {isEditingProfile ? (
+              <div className="space-y-4 border-t pt-2">
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">Full Name</Label>
+                  <Input
+                    id="fullName"
+                    value={editForm.fullName}
+                    onChange={(e) =>
+                      setEditForm((prev) => ({ ...prev, fullName: e.target.value }))
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="skillsAndVibes">Skills & Vibes</Label>
+                  <Textarea
+                    id="skillsAndVibes"
+                    value={editForm.skillsAndVibes}
+                    onChange={(e) =>
+                      setEditForm((prev) => ({
+                        ...prev,
+                        skillsAndVibes: e.target.value,
+                      }))
+                    }
+                    rows={3}
+                  />
+                </div>
+                <div className="flex gap-2 justify-end pt-2">
+                  <Button
+                    variant="ghost"
+                    onClick={() => setIsEditingProfile(false)}
+                    disabled={updateProfileMutation.isPending}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={() => updateProfileMutation.mutate(editForm)}
+                    disabled={updateProfileMutation.isPending}
+                  >
+                    {updateProfileMutation.isPending ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : null}
+                    Save Changes
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <Button
+                variant="outline"
+                className="w-full mt-2"
+                onClick={() => setIsEditingProfile(true)}
+              >
+                Edit Profile
+              </Button>
+            )}
           </div>
         </DialogContent>
       </Dialog>
