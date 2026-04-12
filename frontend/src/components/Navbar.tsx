@@ -393,44 +393,11 @@ export function Navbar({ role }: NavbarProps) {
           <div className="space-y-3 py-4 max-h-[400px] overflow-y-auto">
             {applications && applications.length > 0 ? (
               applications.map((app) => (
-                <div
-                  key={app.applicationId}
-                  className="flex items-center justify-between p-3 border rounded-lg bg-muted/30"
-                >
-                  <div className="flex-1">
-                    <h4 className="font-semibold">
-                      Project ID: {app.projectId}
-                    </h4>
-                    <p className="text-xs text-muted-foreground">
-                      Applied {new Date(app.appliedAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge
-                      variant={
-                        app.status === "ACCEPTED" ? "default" : "secondary"
-                      }
-                      className={
-                        app.status === "REJECTED"
-                          ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                          : ""
-                      }
-                    >
-                      {app.status}
-                    </Badge>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-destructive hover:bg-destructive/10 cursor-pointer"
-                      onClick={() =>
-                        app.applicationId &&
-                        setDeletingAppId(app.applicationId)
-                      }
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
+                <ApplicationItem 
+                  key={app.applicationId} 
+                  app={app} 
+                  onWithdraw={(id) => setDeletingAppId(id)} 
+                />
               ))
             ) : (
               <div className="p-4 border-dashed border-2 rounded-lg text-center text-muted-foreground">
@@ -586,5 +553,52 @@ export function Navbar({ role }: NavbarProps) {
         </DialogContent>
       </Dialog>
     </header>
+  );
+}
+
+function ApplicationItem({ app, onWithdraw }: { app: any; onWithdraw: (id: number) => void }) {
+  const { data: project, isLoading } = useQuery({
+    queryKey: ["project", app.projectId],
+    queryFn: () => projectService.getProjectById(app.projectId),
+    retry: 1,
+  });
+
+  return (
+    <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/30">
+      <div className="flex-1 min-w-0 pr-2">
+        <h4 className="font-semibold line-clamp-1">
+          {isLoading ? (
+            <span className="flex items-center gap-2 text-muted-foreground text-sm">
+              <Loader2 className="h-3 w-3 animate-spin" /> Loading...
+            </span>
+          ) : (
+            project?.title || `Project ID: ${app.projectId}`
+          )}
+        </h4>
+        <p className="text-xs text-muted-foreground">
+          Applied {new Date(app.appliedAt).toLocaleDateString()}
+        </p>
+      </div>
+      <div className="flex items-center gap-2 shrink-0">
+        <Badge
+          variant={app.status === "ACCEPTED" ? "default" : "secondary"}
+          className={
+            app.status === "REJECTED"
+              ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              : ""
+          }
+        >
+          {app.status}
+        </Badge>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 text-destructive hover:bg-destructive/10 cursor-pointer"
+          onClick={() => app.applicationId && onWithdraw(app.applicationId)}
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
   );
 }
